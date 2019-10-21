@@ -1,6 +1,6 @@
 import { model } from "../@prodo/core";
 import { state } from "../@prodo/state";
-import { auth, db } from "../@prodo/firebase";
+import { auth, db } from "../@prodo/realtime-db";
 
 const plugins = { state, auth, db };
 

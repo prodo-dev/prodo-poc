@@ -146,6 +146,7 @@ export const db: any = {
     const store: Store = (window as any)._store;
     const universe: Universe = store.universe;
 
+    // update all queries (do only want to do this for mock)
     Object.values(universe.queries).forEach(({ collection, query }) => {
       fetchAndUpdateQuery(store, collection, query);
     });

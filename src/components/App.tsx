@@ -1,7 +1,7 @@
 import React from "react";
 import "./App.css";
 import { useData, useActions } from "../store";
-import { query } from "../@prodo/firebase";
+import { query } from "../@prodo/realtime-db";
 
 const App: React.FC = () => {
   return (

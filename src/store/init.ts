@@ -1,13 +1,13 @@
 import { Data } from "./model";
-import { initMockDB } from "../@prodo/firebase/mock-db";
+import { initMockDB } from "../@prodo/realtime-db/mock-db";
 
 const init: Data = {
   state: {
     roomId: "132",
-    message: ""
+    message: "",
   },
   auth: {
-    username: "Alice"
+    username: "Alice",
   },
   db: {
     messages: {
@@ -16,10 +16,10 @@ const init: Data = {
         likes: 1,
         emoji: "@",
         author: "Alice",
-        roomId: "132"
-      }
-    }
-  }
+        roomId: "132",
+      },
+    },
+  },
 };
 
 initMockDB({
@@ -30,9 +30,9 @@ initMockDB({
       author: "Ted",
       emoji: "&",
       likes: 10123,
-      text: "hi from M2"
-    }
-  }
+      text: "hi from M2",
+    },
+  },
 });
 
 export default init;
