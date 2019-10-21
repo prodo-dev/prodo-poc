@@ -1,6 +1,13 @@
 {
-  "name": "v5",
+  "name": "prodo-POC",
   "version": "0.1.0",
+  "description": "A minimal MVP to illustate some of Prodo's concepts.",
+  "author": "Bruno Marnette <bruno@prodo.dev>",
+  "keywords": [
+    "react",
+    "state"
+  ],
+  "license": "MIT",
   "private": true,
   "dependencies": {
     "@types/jest": "24.0.19",
