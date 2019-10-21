@@ -1,46 +1,96 @@
-import { getDocs, getDoc, applyPatches } from "./mock-db";
+import { getDocs, getDoc, applyPatches, applyQuery } from "./mock-db";
 import { exec, pluginExec } from "../core";
 import { Query } from "./types";
+import { join } from "../watcher";
 
 const querySymbol = Symbol("query");
 
-window._queries = {};
+interface Universe {
+  db: any;
+  queries: {
+    [key: string]: {
+      collection: string;
+      query: Query;
+      ids: string[];
+    };
+  };
+}
+
+interface Store {
+  universe: Universe;
+}
+
+const getQueryKey = (collection: string, queryVal: Query): string =>
+  `${collection}-${JSON.stringify(queryVal)}`;
+
+const extractData = (
+  store: Store,
+  collection: string,
+  ids: string[],
+): any[] => {
+  return ids.map(id => store.universe.db[collection][id]);
+};
 
 export const query = <T>(
   obj: { [key: string]: T },
   queryVal: Query = {},
 ): Array<{ id: string } & T> => {
-  const { collection, type, store } = (obj as any)[querySymbol];
+  console.log("QUERYING");
 
-  console.log("COLLECTION", collection);
+  const { collection, type, store } = (obj as any)[querySymbol] as {
+    collection?: string;
+    type: string;
+    store: Store;
+  };
 
   if (collection == null || typeof collection !== "string") {
     throw new Error("query error");
   }
 
-  if (type === "component") {
-    const queryKey = `${collection}-${JSON.stringify(queryVal)}`;
-    const q = window._queries[queryKey];
+  const queryKey = getQueryKey(collection, queryVal);
 
-    if (q == null || q.value == null) {
+  if (type === "component") {
+    const q = store.universe.queries[queryKey];
+
+    const queryPath = ["queries", queryKey, "ids"];
+
+    window._prodo.rendering.watching[join(queryPath.concat("@value"))] = {
+      path: queryPath,
+      type: "value",
+      value: (q || {}).ids,
+    };
+
+    if (q == null) {
       getDocs(collection, queryVal).then(data => {
-        pluginExec(store, { id: "(db-fetch)" }, (universe: any) => {
+        pluginExec(store, { id: "(db-fetch)" }, (universe: Universe) => {
+          console.log("data", data);
           data.forEach(doc => {
             universe.db[collection][doc.id] = doc;
           });
 
-          window._queries[queryKey] = {
+          universe.queries[queryKey] = {
             collection,
             query: queryVal,
-            value: data,
+            ids: data.map(d => d.id),
           };
+
+          console.log("\n\nIDS", universe.queries[queryKey].ids);
         });
       });
 
       throw new Error("@FETCHING!");
+    } else {
+      q.ids.forEach(id => {
+        const idPath = ["db", collection, id];
+        window._prodo.rendering.watching[join(idPath.concat("@value"))] = {
+          path: idPath,
+          type: "value",
+          value: store.universe.db[collection][id],
+        };
+      });
     }
 
-    return window._queries[queryKey].value!;
+    return extractData(store, collection, q.ids);
   } else if (type === "action") {
     throw new Error("nyi: query action");
   } else {
@@ -65,6 +115,7 @@ export const auth: any = {
 export const db: any = {
   init(store: any, config: any) {
     store.universe.db = config.db;
+    store.universe.queries = {};
   },
   dataProxy: {
     get(collection: string) {
@@ -91,7 +142,29 @@ export const db: any = {
       throw new Error("@FETCHING!");
     }
   },
-  applyPatches,
+  applyPatches(patches: any) {
+    applyPatches(patches);
+
+    const store: Store = (window as any)._store;
+    const universe: Universe = store.universe;
+
+    Object.values(universe.queries).forEach(({ collection, query }) => {
+      getDocs(collection, query).then(data => {
+        pluginExec(store, { id: "(db-fetch)" }, (universe: Universe) => {
+          const queryKey = getQueryKey(collection, query);
+          data.forEach(doc => {
+            universe.db[collection][doc.id] = doc;
+          });
+
+          universe.queries[queryKey] = {
+            collection,
+            query,
+            ids: data.map(d => d.id),
+          };
+        });
+      });
+    });
+  },
 };
 
 function collectionProxy(collection: string) {

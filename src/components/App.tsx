@@ -18,8 +18,10 @@ const App: React.FC = () => {
 };
 
 const Messages = () => {
-  const { db } = useData(() => <div>Loading Messages...</div>);
-  const messages = query(db.messages);
+  const { state, db } = useData(() => <div>Loading Messages...</div>);
+  const messages = query(db.messages, {
+    where: [["roomId", "==", state.roomId]],
+  });
 
   console.log("MESSAGES", messages);
 

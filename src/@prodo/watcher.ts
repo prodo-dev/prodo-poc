@@ -1,4 +1,4 @@
-const join = (arr: any) => "/" + arr.join("/");
+export const join = (arr: any[]): string => "/" + arr.join("/");
 
 const lengthWatcher = (arr: any, mem: any, path: any) => {
   return new Proxy(arr, {
@@ -24,17 +24,6 @@ function watcher(object: any, mem: any, plugins: any, path: any = []): any {
           const val = plugins[path[0]].beforeWatcher(object, path, prop);
 
           if (val != null) {
-            console.log({
-              path,
-              val,
-            });
-
-            mem[join(path.concat("@value"))] = {
-              path,
-              type: "value",
-              value: target,
-            };
-
             return val;
           }
         } catch (e) {
