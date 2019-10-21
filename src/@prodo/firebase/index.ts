@@ -1,7 +1,7 @@
 import { getDocs, getDoc, applyPatches, applyQuery } from "./mock-db";
 import { exec, pluginExec } from "../core";
 import { Query } from "./types";
-import { join } from "../watcher";
+import { join, watchPath } from "../watcher";
 
 const querySymbol = Symbol("query");
 
@@ -31,12 +31,31 @@ const extractData = (
   return ids.map(id => store.universe.db[collection][id]);
 };
 
+const fetchAndUpdateQuery = (
+  store: Store,
+  collection: string,
+  queryVal: Query,
+) => {
+  const queryKey = getQueryKey(collection, queryVal);
+  getDocs(collection, queryVal).then(data => {
+    pluginExec(store, { id: "(db-fetch)" }, (universe: Universe) => {
+      data.forEach(doc => {
+        universe.db[collection][doc.id] = doc;
+      });
+
+      universe.queries[queryKey] = {
+        collection,
+        query: queryVal,
+        ids: data.map(d => d.id),
+      };
+    });
+  });
+};
+
 export const query = <T>(
   obj: { [key: string]: T },
   queryVal: Query = {},
 ): Array<{ id: string } & T> => {
-  console.log("QUERYING");
-
   const { collection, type, store } = (obj as any)[querySymbol] as {
     collection?: string;
     type: string;
@@ -54,39 +73,18 @@ export const query = <T>(
 
     const queryPath = ["queries", queryKey, "ids"];
 
-    window._prodo.rendering.watching[join(queryPath.concat("@value"))] = {
-      path: queryPath,
-      type: "value",
-      value: (q || {}).ids,
-    };
+    // watch the entire query
+    watchPath(queryPath, "value", (q || {}).ids);
 
     if (q == null) {
-      getDocs(collection, queryVal).then(data => {
-        pluginExec(store, { id: "(db-fetch)" }, (universe: Universe) => {
-          console.log("data", data);
-          data.forEach(doc => {
-            universe.db[collection][doc.id] = doc;
-          });
-
-          universe.queries[queryKey] = {
-            collection,
-            query: queryVal,
-            ids: data.map(d => d.id),
-          };
-
-          console.log("\n\nIDS", universe.queries[queryKey].ids);
-        });
-      });
+      fetchAndUpdateQuery(store, collection, queryVal);
 
       throw new Error("@FETCHING!");
     } else {
+      // watch each doc in query
       q.ids.forEach(id => {
         const idPath = ["db", collection, id];
-        window._prodo.rendering.watching[join(idPath.concat("@value"))] = {
-          path: idPath,
-          type: "value",
-          value: store.universe.db[collection][id],
-        };
+        watchPath(idPath, "value", store.universe.db[collection][id]);
       });
     }
 
@@ -149,28 +147,13 @@ export const db: any = {
     const universe: Universe = store.universe;
 
     Object.values(universe.queries).forEach(({ collection, query }) => {
-      getDocs(collection, query).then(data => {
-        pluginExec(store, { id: "(db-fetch)" }, (universe: Universe) => {
-          const queryKey = getQueryKey(collection, query);
-          data.forEach(doc => {
-            universe.db[collection][doc.id] = doc;
-          });
-
-          universe.queries[queryKey] = {
-            collection,
-            query,
-            ids: data.map(d => d.id),
-          };
-        });
-      });
+      fetchAndUpdateQuery(store, collection, query);
     });
   },
 };
 
 function collectionProxy(collection: string) {
   const get = (_: any, doc: string | symbol) => {
-    console.log("DOC", doc, typeof doc);
-
     if (doc === querySymbol) {
       return collection;
     }

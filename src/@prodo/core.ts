@@ -207,7 +207,7 @@ function hasChanged({ path, type, value }: any, nextUniverse: any) {
       value.every((v: any, i: any) => v === nextKeys[i])
     );
   } else {
-    throw new Error("NYI");
+    throw new Error(`NYI - type: ${type}`);
   }
 }
 

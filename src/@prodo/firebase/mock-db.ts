@@ -25,7 +25,7 @@ export async function getDocs(
   collection: string,
   query: Query,
 ): Promise<any[]> {
-  // await new Promise(r => setTimeout(r, DELAY));
+  await new Promise(r => setTimeout(r, DELAY));
 
   const result = applyQuery(collection, query);
   return result;

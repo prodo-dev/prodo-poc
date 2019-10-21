@@ -15,6 +15,14 @@ const lengthWatcher = (arr: any, mem: any, path: any) => {
   });
 };
 
+export const watchPath = (path: string[], type: string, value: any) => {
+  window._prodo.rendering.watching[join(path.concat(`@${type}`))] = {
+    path,
+    type,
+    value,
+  };
+};
+
 function watcher(object: any, mem: any, plugins: any, path: any = []): any {
   if (typeof object !== "object") return object;
   return new Proxy(object, {
