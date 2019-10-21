@@ -33,7 +33,7 @@ export function model<Data>(plugins: any): Model<Data> {
       return watcher(
         window._prodo.rendering.store.universe,
         window._prodo.rendering.watching,
-        plugins
+        plugins,
       );
     },
     useActions: <A>(actions: A) => () => {
@@ -56,13 +56,13 @@ export function model<Data>(plugins: any): Model<Data> {
           return new Promise(resolve => {
             exec(store, { id: "$" + ROOT_ID++ }, action, args, resolve);
           });
-        }
+        },
       };
       Object.keys(plugins).forEach(key => {
         plugins[key].init(store, init);
       });
       return store;
-    }
+    },
   };
 }
 
@@ -133,7 +133,7 @@ export function exec(
   event: any,
   action: Function,
   args: any[],
-  cb?: Function
+  cb?: Function,
 ) {
   prepareEvent(event);
   window._prodo.executing = [store, event, action, args, cb];
@@ -147,7 +147,7 @@ export function exec(
       },
       (p: any) => {
         patches = p;
-      }
+      },
     );
   } catch (e) {
     if (e.message === "@WAIT!") return;
@@ -161,7 +161,7 @@ export function exec(
     args,
     prev: store.universe,
     next: nextUniverse,
-    patches
+    patches,
   });
   store.universe = nextUniverse;
   if (cb) cb(store);
@@ -186,14 +186,14 @@ export function pluginExec(store: any, event: any, func: any) {
   const nextUniverse = produce(store.universe, func, p => {
     patches = p;
   });
-  selectiveRerender(store, event, nextUniverse);
   console.log("plugin action", {
     ...event,
     patches,
     prev: store.universe,
-    next: nextUniverse
+    next: nextUniverse,
   });
   store.universe = nextUniverse;
+  selectiveRerender(store, event, nextUniverse);
 }
 
 function hasChanged({ path, type, value }: any, nextUniverse: any) {
@@ -207,7 +207,7 @@ function hasChanged({ path, type, value }: any, nextUniverse: any) {
       value.every((v: any, i: any) => v === nextKeys[i])
     );
   } else {
-    throw new Error("NYI");
+    throw new Error(`NYI - type: ${type}`);
   }
 }
 
@@ -217,8 +217,8 @@ function selectiveRerender(store: Store, event: any, nextUniverse: any) {
     .map(c => ({
       ...c,
       changed: Object.keys(c.watching).find(path =>
-        hasChanged(c.watching[path], nextUniverse)
-      )
+        hasChanged(c.watching[path], nextUniverse),
+      ),
     }))
     .filter(c => c.changed)
     .sort((c1, c2) => c1.order - c2.order)
@@ -226,7 +226,7 @@ function selectiveRerender(store: Store, event: any, nextUniverse: any) {
       console.log("rerender", {
         id: c.id,
         changedPath: c.changed,
-        triggeredBy: event.id
+        triggeredBy: event.id,
       });
       c.rerender();
     });

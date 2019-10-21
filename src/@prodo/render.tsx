@@ -51,7 +51,7 @@ function connect(Func: any) {
       window._prodo.rendering = {
         store,
         id: this.id,
-        watching: {}
+        watching: {},
       };
       let element;
       try {
@@ -64,7 +64,7 @@ function connect(Func: any) {
           console.warn(
             `ERROR WHILE RENDERING ${this.id}`,
             this.props,
-            e.message
+            e.message,
           );
           throw e;
         }
@@ -74,7 +74,7 @@ function connect(Func: any) {
         id: this.id,
         order: this.order,
         rerender: this.rerender,
-        watching
+        watching,
       };
       window._prodo.rendering = this.prevRendering;
       return element;
@@ -90,7 +90,7 @@ function render(_React: any, App: any, store: any) {
     <StoreContext.Provider value={store}>
       <App />
     </StoreContext.Provider>,
-    document.getElementById("root")
+    document.getElementById("root"),
   );
 }
 

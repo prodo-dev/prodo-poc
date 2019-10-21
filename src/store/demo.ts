@@ -1,14 +1,14 @@
 import model from "./model";
 import { setRoom, postMessage, likeMessage } from "./actions";
-import { initMockDB } from "../@prodo/firebase/mock-db";
+import { initMockDB } from "../@prodo/realtime-db/mock-db";
 
 const store = model.createStore({
   state: {
     roomId: "LoL",
-    message: ""
+    message: "",
   },
   auth: {
-    username: "Ted"
+    username: "Ted",
   },
   db: {
     messages: {
@@ -17,10 +17,10 @@ const store = model.createStore({
         author: "Ted",
         emoji: "?",
         likes: 10,
-        text: "hi there"
-      }
-    }
-  }
+        text: "hi there",
+      },
+    },
+  },
 });
 
 async function test() {
