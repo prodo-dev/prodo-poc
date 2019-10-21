@@ -1,11 +1,52 @@
-import { getDoc, applyPatches } from "./mock-db";
+import { getDocs, getDoc, applyPatches } from "./mock-db";
 import { exec, pluginExec } from "../core";
+import { Query } from "./types";
 
-declare global {
-  interface Window {
-    _prodo: any;
+const querySymbol = Symbol("query");
+
+window._queries = {};
+
+export const query = <T>(
+  obj: { [key: string]: T },
+  queryVal: Query = {},
+): Array<{ id: string } & T> => {
+  const { collection, type, store } = (obj as any)[querySymbol];
+
+  console.log("COLLECTION", collection);
+
+  if (collection == null || typeof collection !== "string") {
+    throw new Error("query error");
   }
-}
+
+  if (type === "component") {
+    const queryKey = `${collection}-${JSON.stringify(queryVal)}`;
+    const q = window._queries[queryKey];
+
+    if (q == null || q.value == null) {
+      getDocs(collection, queryVal).then(data => {
+        pluginExec(store, { id: "(db-fetch)" }, (universe: any) => {
+          data.forEach(doc => {
+            universe.db[collection][doc.id] = doc;
+          });
+
+          window._queries[queryKey] = {
+            collection,
+            query: queryVal,
+            value: data,
+          };
+        });
+      });
+
+      throw new Error("@FETCHING!");
+    }
+
+    return window._queries[queryKey].value!;
+  } else if (type === "action") {
+    throw new Error("nyi: query action");
+  } else {
+    throw new Error(`unknown type: ${type}`);
+  }
+};
 
 export const auth: any = {
   init(store: any, config: any) {
@@ -17,8 +58,8 @@ export const auth: any = {
     },
     set(field: string, value: any) {
       throw new Error("auth is read-only");
-    }
-  }
+    },
+  },
 };
 
 export const db: any = {
@@ -31,11 +72,16 @@ export const db: any = {
     },
     set(field: string, value: any) {
       throw new Error("db collections are read-only");
-    }
+    },
   },
-  beforeWatcher(object: any, path: any, prop: any) {
+  beforeWatcher(object: any, path: string[], prop: any) {
+    const { store } = window._prodo.rendering;
+
+    if (prop === querySymbol) {
+      return { collection: path[path.length - 1], type: "component", store };
+    }
+
     if (path.length === 2 && !object[prop]) {
-      const { store } = window._prodo.rendering;
       const [collection, doc] = [path[1], prop];
       getDoc(path[1], prop).then(data => {
         pluginExec(store, { id: "(db-fetch)" }, (universe: any) => {
@@ -45,14 +91,25 @@ export const db: any = {
       throw new Error("@FETCHING!");
     }
   },
-  applyPatches
+  applyPatches,
 };
 
 function collectionProxy(collection: string) {
-  const get = (_: any, doc: string) => {
+  const get = (_: any, doc: string | symbol) => {
+    console.log("DOC", doc, typeof doc);
+
+    if (doc === querySymbol) {
+      return collection;
+    }
+
+    if (typeof doc !== "string") {
+      throw new Error("symbols not supported");
+    }
+
     const uid = collection + "/" + doc;
     const [store, event, action, args, cb] = window._prodo.executing;
     const col = window._prodo.universe.db[collection];
+
     if (col[doc]) {
       return col[doc];
     } else if (event.dbFetch && event.dbFetch[uid]) {
@@ -68,7 +125,9 @@ function collectionProxy(collection: string) {
     }
   };
   const set = (_: any, doc: string, value: any) => {
-    return Reflect.set(window._prodo.universe.db[collection], doc, value);
+    const res = Reflect.set(window._prodo.universe.db[collection], doc, value);
+
+    return res;
   };
   return new Proxy({}, { get, set });
 }

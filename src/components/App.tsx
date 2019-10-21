@@ -1,6 +1,7 @@
 import React from "react";
 import "./App.css";
 import { useData, useActions } from "../store";
+import { query } from "../@prodo/firebase";
 
 const App: React.FC = () => {
   return (
@@ -8,11 +9,25 @@ const App: React.FC = () => {
       <div className="full">
         <RoomSelector />
 
-        <Message id="M1" />
-        <Message id="M2" />
+        <Messages />
       </div>
 
       <PostMessage />
+    </div>
+  );
+};
+
+const Messages = () => {
+  const { db } = useData(() => <div>Loading Messages...</div>);
+  const messages = query(db.messages);
+
+  console.log("MESSAGES", messages);
+
+  return (
+    <div className="messages">
+      {messages.map(m => (
+        <Message key={m.id} id={m.id} />
+      ))}
     </div>
   );
 };
@@ -36,7 +51,7 @@ const RoomSelector = () => {
   const { setRoom } = useActions();
   return (
     <div className="room-selector">
-      <h1>Room</h1>
+      <h2>Room</h2>
       <input
         type="text"
         value={state.roomId}
