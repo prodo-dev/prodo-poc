@@ -82,6 +82,7 @@ const PostMessage = () => {
       >
         <input
           placeholder="say something nice"
+          value={state.message}
           onChange={e => setMessage(e.target.value)}
         />
         <button type="submit" disabled={state.message === ""}>
