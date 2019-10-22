@@ -3,15 +3,19 @@ import effects from "./effects";
 
 const { db, state, auth } = model.data;
 
-export function setRoom(id: string) {
+export const setRoom = (id: string) => {
   state.roomId = id;
-}
+};
 
-export function likeMessage(id: string) {
+export const setMessage = (text: string) => {
+  state.message = text;
+};
+
+export const likeMessage = (id: string) => {
   db.messages[id].likes++;
-}
+};
 
-export function postMessage(text: string) {
+export const postMessage = (text: string) => {
   const id = effects.newId();
   const emoji = effects.randomEmoji();
   db.messages[id] = {
@@ -19,6 +23,6 @@ export function postMessage(text: string) {
     author: auth.username,
     likes: 0,
     roomId: state.roomId,
-    emoji
+    emoji,
   };
-}
+};

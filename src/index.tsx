@@ -5,8 +5,6 @@ import initStore from "./store";
 import "./index.css";
 import * as serviceWorker from "./serviceWorker";
 
-import "./store/demo";
-
 render(React, App, initStore);
 
 // If you want your app to work offline and load faster, you can change

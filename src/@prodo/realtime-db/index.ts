@@ -1,7 +1,7 @@
-import { getDocs, getDoc, applyPatches, applyQuery } from "./mock-db";
+import { getDocs, getDoc, applyPatches } from "./mock-db";
 import { exec, pluginExec } from "../core";
 import { Query } from "./types";
-import { join, watchPath } from "../watcher";
+import { watchPath } from "../watcher";
 
 const querySymbol = Symbol("query");
 

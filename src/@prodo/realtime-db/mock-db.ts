@@ -58,5 +58,6 @@ function match(value: any, queryVal: Query): boolean {
     if (op === "!=") return value[f] !== v;
     if (op === "<") return value[f] < v;
     if (op === ">") return value[f] > v;
+    return false;
   });
 }

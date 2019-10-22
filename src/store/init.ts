@@ -3,7 +3,7 @@ import { initMockDB } from "../@prodo/realtime-db/mock-db";
 
 const init: Data = {
   state: {
-    roomId: "132",
+    roomId: "typescript",
     message: "",
   },
   auth: {
@@ -12,11 +12,18 @@ const init: Data = {
   db: {
     messages: {
       M1: {
-        text: "hello from M1",
-        likes: 1,
-        emoji: "@",
+        text: "Hello",
+        likes: 0,
+        emoji: "😃",
         author: "Alice",
-        roomId: "132",
+        roomId: "typescript",
+      },
+      M2: {
+        text: "How are you",
+        likes: 1,
+        emoji: "👾",
+        author: "Ted",
+        roomId: "typescript",
       },
     },
   },
@@ -25,13 +32,6 @@ const init: Data = {
 initMockDB({
   messages: {
     ...init.db.messages,
-    M2: {
-      roomId: "League",
-      author: "Ted",
-      emoji: "&",
-      likes: 10123,
-      text: "hi from M2",
-    },
   },
 });
 

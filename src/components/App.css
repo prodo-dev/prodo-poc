@@ -13,8 +13,8 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  margin: 0;
-  color: royalblue;
+  margin: 1rem 0;
+  color: #333;
   height: var(--header);
   font-size: 3em;
 }
@@ -22,7 +22,7 @@
 .room-selector {
   display: flex;
   align-items: center;
-  background-color: plum;
+  background-color: var(--primary);
   padding: 0 1rem;
   margin: 1rem 0;
 }
@@ -35,16 +35,45 @@
   flex-grow: 1;
 }
 
+input {
+  margin: 0 auto;
+  width: 100%;
+  max-width: 100vw;
+  padding: 0.25rem 0.5rem;
+  font-size: 1.2em;
+  border: none;
+  border-radius: 2px;
+}
+
+button {
+  apperance: none;
+  border: none;
+  background-color: var(--secondary);
+  height: 100%;
+  font-size: 1.1em;
+  cursor: pointer;
+}
+
 .new-chat-message {
   position: absolute;
   bottom: 0;
   margin: 0 auto;
-  padding: 0 1rem;
+  margin-bottom: 1rem;
   width: 100%;
   height: var(--input);
+}
+
+.new-chat-message form {
   display: flex;
   align-items: center;
   justify-content: center;
+  padding: 1rem;
+  background-color: var(--primary);
+}
+
+.new-chat-message button {
+  margin-left: 0.5rem;
+  padding: 0.25rem 1rem;
 }
 
 .like-button {
@@ -55,6 +84,7 @@
   display: flex;
   align-items: center;
   font-weight: bold;
+  font-size: 1em;
 
   transition: transform 150ms ease-in-out;
 }
@@ -69,18 +99,8 @@
 
 .heart {
   color: red;
-  font-size: 4em;
+  font-size: 3em;
   margin-left: 0.5rem;
-}
-
-input {
-  margin: 0 auto;
-  width: 100%;
-  max-width: 100vw;
-  padding: 0.25rem 0.5rem;
-  font-size: 1.2em;
-  border: solid 1px hotpink;
-  border-radius: 2px;
 }
 
 .messages {
@@ -113,6 +133,11 @@ input {
 
 .text {
   flex-grow: 1;
+}
+
+.emoji {
+  padding-right: 1rem;
+  font-size: 1.5em;
 }
 
 .buttons {

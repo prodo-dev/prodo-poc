@@ -7,6 +7,7 @@ const App: React.FC = () => {
   return (
     <div className="app">
       <div className="full">
+        <h1 className="title">Chat App</h1>
         <RoomSelector />
 
         <Messages />
@@ -40,6 +41,10 @@ const Message = ({ id }: { id: string }) => {
 
   return (
     <div className="message">
+      <span
+        className="emoji"
+        dangerouslySetInnerHTML={{ __html: db.messages[id].emoji }}
+      />
       <span className="text">{db.messages[id].text}</span>
       <button className="like-button" onClick={() => likeMessage(id)}>
         {db.messages[id].likes} <span className="heart">♥</span>
@@ -64,19 +69,25 @@ const RoomSelector = () => {
 };
 
 const PostMessage = () => {
-  const { postMessage } = useActions();
+  const { state } = useData();
+  const { postMessage, setMessage } = useActions();
 
   return (
     <div className="new-chat-message">
-      <input
-        placeholder="say something nice"
-        onKeyUp={(e: any) => {
-          if (e.keyCode === 13 /* enter */) {
-            postMessage(e.target.value);
-            e.target.value = "";
-          }
+      <form
+        onSubmit={e => {
+          e.preventDefault();
+          postMessage(state.message);
         }}
-      />
+      >
+        <input
+          placeholder="say something nice"
+          onChange={e => setMessage(e.target.value)}
+        />
+        <button type="submit" disabled={state.message === ""}>
+          Post
+        </button>
+      </form>
     </div>
   );
 };
