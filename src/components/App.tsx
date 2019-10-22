@@ -26,8 +26,6 @@ const Messages = () => {
     where: [["roomId", "==", state.roomId]],
   });
 
-  console.log("MESSAGES", messages);
-
   return (
     <div className="messages">
       {messages.map(m => (
