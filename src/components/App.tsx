@@ -7,8 +7,10 @@ const App: React.FC = () => {
   return (
     <div className="app">
       <div className="full">
-        <h1 className="title">Chat App</h1>
-        <RoomSelector />
+        <header>
+          <h1 className="title">Chat App</h1>
+          <RoomSelector />
+        </header>
 
         <Messages />
       </div>

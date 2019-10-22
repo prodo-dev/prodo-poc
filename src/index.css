@@ -12,7 +12,7 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 
-  --header: 6rem;
+  --header: 10rem;
   --input: 4rem;
   --primary: #00E3A0;
   --secondary: #e6f1ff;

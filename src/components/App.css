@@ -9,13 +9,16 @@
   margin: 0 auto;
 }
 
+header {
+  height: var(--header);
+}
+
 .title {
   display: flex;
   align-items: center;
   justify-content: center;
   margin: 1rem 0;
   color: #333;
-  height: var(--header);
   font-size: 3em;
 }
 
@@ -106,29 +109,13 @@ button {
 .messages {
   padding-bottom: 2rem;
   overflow-y: auto;
+  height: calc(100vh - var(--header) - var(--input) - 2rem);
 }
 
 .message {
   display: flex;
   align-items: center;
   padding: 0 1rem;
-}
-
-.status {
-  padding: 0 1rem;
-}
-
-.center {
-  max-width: 700px;
-  margin: 0 auto;
-}
-
-.date {
-  color: grey;
-  font-size: 0.8em;
-  min-width: 10rem;
-  display: inline-block;
-  padding-right: 2rem;
 }
 
 .text {
@@ -138,27 +125,4 @@ button {
 .emoji {
   padding-right: 1rem;
   font-size: 1.5em;
-}
-
-.buttons {
-  padding-bottom: 1rem;
-  padding-left: 1rem;
-}
-
-.top-bar {
-  display: flex;
-  padding: 1rem;
-  padding-top: 0;
-
-  input {
-    margin-left: 0.5rem;
-  }
-}
-
-.pinned-message {
-  padding: 1rem;
-  white-space: pre;
-  font-family: monospace;
-  font-size: 1.3em;
-  min-height: 200px;
 }
