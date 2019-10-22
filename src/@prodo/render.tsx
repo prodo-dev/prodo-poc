@@ -83,9 +83,12 @@ function connect(Func: any) {
 }
 
 function render(_React: any, App: any, store: any) {
-  autoconnect(_React);
-  // @ts-ignore
-  window._store = store; // for debugging
+  if (!(window as any).patched) {
+    autoconnect(_React);
+    (window as any).patched = true;
+  }
+
+  (window as any)._store = store; // for debugging
   ReactDOM.render(
     <StoreContext.Provider value={store}>
       <App />
