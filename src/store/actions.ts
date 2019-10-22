@@ -16,6 +16,7 @@ export const likeMessage = (id: string) => {
 };
 
 export const postMessage = (text: string) => {
+  state.message = "";
   const id = effects.newId();
   const emoji = effects.randomEmoji();
   db.messages[id] = {
