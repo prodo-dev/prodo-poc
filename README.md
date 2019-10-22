@@ -12,4 +12,4 @@ It is deployed [on CodeSanbox](https://codesandbox.io/s/github/prodo-dev/prodo-p
 
 [![Edit prodo-POC](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/s/github/prodo-dev/prodo-poc/tree/master/?fontsize=14&module=%2Fsrc%2Fcomponents%2FApp.tsx)
 
-If you were looking instead for the _current_ implementation of the Prodo framework, please head over [there](https://github.com/prodo-dev/prodo) instead. To participate to the conversation and help us shape the future of Prodo, please don't hesitate to join our [Slack channel](https://prodo-feedback-slackin.herokuapp.com).
+The above code is only a proof of concept and should not be used in production. If you were looking instead for a more production ready version of the Prodo framework, please head over [here](https://github.com/prodo-dev/prodo) instead. To participate to the conversation and help us shape the future of Prodo, please don't hesitate to join our [Slack channel](https://prodo-feedback-slackin.herokuapp.com).
