@@ -1,5 +1,4 @@
-<img src="https://user-images.githubusercontent.com/3044853/65060781-6d032d00-d970-11e9-9bb2-44c1811f80b5.png" height="60px" align="left"/>
-
+<img src="https://user-images.githubusercontent.com/3044853/65060781-6d032d00-d970-11e9-9bb2-44c1811f80b5.png" height="90px" align="left"/>
 
 # Self-contained MVP
 
