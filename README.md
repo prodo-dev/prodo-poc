@@ -2,10 +2,10 @@
 
 # Self-contained MVP
 
-This code is to illustrate some of the core concepts discussed in this [post](insert Medium post url).
+This code is to illustrate some of the core concepts discussed in this [post](https://medium.com/prodo-ai/bringing-the-simplicity-of-react-to-your-entire-stack-a63b414d9714).
 
-- User app code is in `src/index.tsx` and `src/components/App.tsx`
-- Prodo library code is in `src/@prodo`
+- User app code is in `src/index.tsx`, `src/store` and `src/components`
+- Library code is in `src/@prodo`
 
 It is deployed [on CodeSanbox](https://codesandbox.io/s/github/prodo-dev/prodo-poc).
 
